@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">스쿨메이트</string>
+    <string name="title_activity_intro">IntroActivity</string>
+</resources>

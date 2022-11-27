@@ -1,0 +1,18 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.haeyum.domain'
+    compileSdk 33
+}
+
+dependencies {
+
+    // hilt
+    api "com.google.dagger:hilt-android:2.44"
+    api 'androidx.hilt:hilt-navigation-compose:1.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}
