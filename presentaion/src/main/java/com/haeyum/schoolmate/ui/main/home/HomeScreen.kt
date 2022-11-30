@@ -1,149 +1,108 @@
 package com.haeyum.schoolmate.ui.main.home
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateFloatAsState
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
-
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
-
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.toy_proejct.data.TimeScheduel
-import com.example.toy_proejct.data.Todo
-import com.example.toy_proejct.data.product.list.ProductListDto
-
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonNull.content
-
+import androidx.constraintlayout.compose.ConstraintLayoutScope
+import com.haeyum.schoolmate.data.Home.TimeScheduleDto
+import com.haeyum.schoolmate.data.Home.TodoDto
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
 
-    val tempData: List<TimeScheduel> = listOf(
-        TimeScheduel(location = "산융 205호", major = "수학2", time = "11:30~12:20"),
-        TimeScheduel(location = "산융 206호", major = "수학2", time = "11:30~12:20"),
-    )
-
-
-    val tempTodo: List<Todo> = listOf(
-        Todo(
-            name = "13주차 교제 과제",
-            major = "영어",
-            time = "11.21 오전 11:00",
-            is_submit = false
-        ),
-        Todo(
-            name = "13주차 교제 과제",
-            major = "영어",
-            time = "11.21 오전 11:00",
-            is_submit = false
-        ),
-        Todo(
-            name = "13주차 교제 과제",
-            major = "영어",
-            time = "11.21 오전 11:00",
-            is_submit = true
-        ),
-        Todo(
-            name = "13주차 교제 과제",
-            major = "영어",
-            time = "11.21 오전 11:00",
-            is_submit = true
-        ),
-    )
+    viewModel.getData()
+    val timeScheduleInfo = viewModel.timeScheduleInfo.value
+    val todoInfo = viewModel.todoInfo.value
 
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+        val profile = createRef()
+        val content = createRef()
+        val nextTimetable = createRef()
 
-        val layout1 = createRef()
-        val layout2 = createRef()
-        val anounceNextTime = createRef()
-
-
-        Column(
-            modifier = Modifier
-                .background(color = Color(0xFF3C5CFF))
-                .fillMaxWidth()
-                .padding(top = 44.dp, bottom = 67.dp)
-                .padding(horizontal = 30.dp)
-                .constrainAs(layout1) {
-                }
-
-            //padding값으로 높이를 조절하기 -> 내부 요소값이 아무리 바뀌어도 상대적으로 조절 가능
-            //또는 FilmaxHeight로 퍼센트값 주기
-
-        ) {
-            UserInfo()
-        }
-        Column(modifier = Modifier
-            .zIndex(1f)
-            .constrainAs(anounceNextTime) {
-                top.linkTo(layout2.top)
-                bottom.linkTo(layout1.bottom)
-            }
-            .padding(horizontal = 30.dp)
-            .clip(shape = RoundedCornerShape(12.dp))
-            //패딩을 먼저주고 배경색지정. 그리고 내부 패딩지정
-            .background(color = Color(0xFF302E43))
-            .padding(20.dp),
-            verticalArrangement = Arrangement.Center) {
-            announceLesson()
-        }
-
-        Column(
-            modifier = Modifier
-                .background(color = Color(0xFF1F1F39))
-                .fillMaxWidth()
-                .padding(top = 80.dp)
-                .constrainAs(layout2) {
-                    top.linkTo(layout1.bottom)
-                }, content = contents(tempData, tempTodo)
-
-        )
+        ProfileFrame(profile)
+        NextTimeTableFrame(nextTimetable, content, profile)
+        ContentFrame(content, profile, timeScheduleInfo, todoInfo)
     }
 
 }
 
 @Composable
-private fun contents(
-    tempData: List<TimeScheduel>,
-    tempTodo: List<Todo>
+private fun ConstraintLayoutScope.ContentFrame(
+    contentRef: ConstrainedLayoutReference,
+    profileRef: ConstrainedLayoutReference,
+    tempData: List<TimeScheduleDto>,
+    tempTodo: List<TodoDto>
+) {
+    Column(
+        modifier = Modifier
+            .background(color = Color(0xFF1F1F39))
+            .fillMaxWidth()
+            .padding(top = 80.dp)
+            .constrainAs(contentRef) {
+                top.linkTo(profileRef.bottom)
+            }, content = Contents(tempData, tempTodo)
+
+    )
+}
+
+@Composable
+private fun ConstraintLayoutScope.NextTimeTableFrame(
+    nextTimetableRef: ConstrainedLayoutReference,
+    scheduleRef: ConstrainedLayoutReference,
+    profileRef: ConstrainedLayoutReference
+) {
+    Column(modifier = Modifier
+        .zIndex(1f)
+        .constrainAs(nextTimetableRef) {
+            top.linkTo(scheduleRef.top)
+            bottom.linkTo(profileRef.bottom)
+        }
+        .padding(horizontal = 30.dp)
+        .clip(shape = RoundedCornerShape(12.dp))
+        .background(color = Color(0xFF302E43))
+        .padding(20.dp),
+        verticalArrangement = Arrangement.Center) {
+        NextTimetable()
+    }
+}
+
+@Composable
+private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference) {
+    Column(
+        modifier = Modifier
+            .background(color = Color(0xFF3C5CFF))
+            .fillMaxWidth()
+            .padding(top = 44.dp, bottom = 67.dp)
+            .padding(horizontal = 30.dp)
+            .constrainAs(profileRef){}
+
+    ) {
+        UserInfo()
+    }
+}
+
+
+
+
+@Composable
+private fun Contents(
+    timeScheduleInfo: List<TimeScheduleDto>,
+    todoInfo: List<TodoDto>
 ): @Composable() (ColumnScope.() -> Unit) =
     {
         Column(
@@ -151,49 +110,56 @@ private fun contents(
                 .padding(horizontal = 30.dp),
             verticalArrangement = Arrangement.Center
         ) {
-
-
-            Text(
-                text = "오늘 시간표",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
-
-            Column(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color = Color(0xFF302E43))
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                tempData.forEach { data ->
-                    TimeScheduelContent(data)
-                }
-            }
-
-            Text(
-                text = "오늘 할일",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier.padding(bottom = 20.dp, top = 30.dp)
-            )
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-            ) {
-                tempTodo.forEachIndexed() { index, data ->
-                    TodoList(index, data)
-                }
-            }
-
-        }
+            TimeSchedule(timeScheduleInfo)
+            Todo(todoInfo)
+          }
+        
     }
 
 @Composable
-private fun announceLesson() {
+private fun Todo(todoInfoList: List<TodoDto>) {
+    Text(
+        text = "오늘 할일",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        modifier = Modifier.padding(bottom = 20.dp, top = 30.dp)
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        todoInfoList.forEachIndexed() { index, data ->
+            TodoList(index, data)
+        }
+    }
+}
+
+@Composable
+private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
+    Text(
+        text = "오늘 시간표",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        modifier = Modifier.padding(bottom = 20.dp)
+    )
+
+    Column(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(12.dp))
+            .background(color = Color(0xFF302E43))
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        timeScheduleInfo.forEach { data ->
+            TimeScheduleList(data)
+        }
+    }
+}
+
+@Composable
+private fun NextTimetable() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -238,7 +204,7 @@ private fun UserInfo() {
 
 
 @Composable
-fun TimeScheduelContent(data: TimeScheduel) {
+private fun TimeScheduleList(data: TimeScheduleDto) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -273,13 +239,9 @@ fun TimeScheduelContent(data: TimeScheduel) {
 
 
 @Composable
-fun TodoList(index: Int, data: Todo) {
+fun TodoList(index: Int, data: TodoDto) {
 
-    //boolean값에 따라 색과 Text or 파란 동그라미를 그려야 한다.
-
-    // 1. 아얘 다른 컴포넌트로 분리하기 (근데 공통되는 부분이 있다.)
-    // 2. 다른 부분만 if문으로 분기해서 나타내기 (이게맞는듯?)
-
+    
     val color = if (data.is_submit) Color(0xFF3C5CFF) else Color(0xFFFF5C17)
 
     Row(
