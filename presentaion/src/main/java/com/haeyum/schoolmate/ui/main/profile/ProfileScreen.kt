@@ -8,6 +8,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,13 +18,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
+import com.haeyum.domain.data.profile.Profile
+import com.haeyum.domain.data.profile.Setting
 import com.haeyum.schoolmate.ui.component.HeaderComponent
 import com.haeyum.schoolmate.ui.component.ToggleComponent
 import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ColumnScope.ProfileScreen() {
+fun ColumnScope.ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+    val profile = viewModel.profile.collectAsState().value
+
+    PureProfileScreen(profile)
+}
+
+@Composable
+private fun ColumnScope.PureProfileScreen(profile: Profile?) {
     val (enabledProfile, setEnabledProfile) = remember {
         mutableStateOf(false)
     }
@@ -32,12 +46,12 @@ fun ColumnScope.ProfileScreen() {
     }
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.Companion
             .weight(1f)
             .padding(horizontal = 30.dp)
     ) {
         HeaderComponent.LargeHeader(title = "프로필", description = "나의 멋진 설명을 담아보았어요")
-        Profile(name = "유광무", studentId = "2019156023", major = "컴퓨터공학부 소프트웨어 전공")
+        Profile(profile = profile)
         Spacer(modifier = Modifier.height(20.dp))
         Section(text = "설정") {
             ToggleItem(
@@ -65,11 +79,15 @@ fun ColumnScope.ProfileScreen() {
 }
 
 @Composable
-private fun Profile(name: String, studentId: String, major: String) {
+private fun Profile(profile: Profile?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 30.dp),
+            .padding(top = 30.dp)
+            .placeholder(
+                visible = profile == null,
+                highlight = PlaceholderHighlight.shimmer()
+            ),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // TODO : 차후 프로필 API 나오면 사진 연동
@@ -80,20 +98,26 @@ private fun Profile(name: String, studentId: String, major: String) {
         )
         Column {
             Text(
-                text = name,
-                modifier = Modifier.padding(top = 2.dp),
+                text = profile?.name ?: "-",
+                modifier = Modifier
+                    .padding(top = 2.dp)
+                    .fillMaxWidth(),
                 color = TextColor,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = studentId,
+                text = profile?.studentId ?: "-",
+                modifier = Modifier
+                    .fillMaxWidth(),
                 color = TextColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
             )
             Text(
-                text = major,
+                text = profile?.major ?: "-",
+                modifier = Modifier
+                    .fillMaxWidth(),
                 color = TextColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
@@ -141,28 +165,78 @@ private fun ToggleItem(
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun ProfileScreenDarkPreview() {
+private fun ProfileScreenCompleteDarkPreview() {
     SchoolmateTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ProfileScreen()
+            PureProfileScreen(
+                profile = Profile(
+                    code = 0,
+                    name = "유광무",
+                    studentId = "2019156023",
+                    major = "컴퓨터공학부 소프트웨어 전공",
+                    setting = Setting(
+                        enabledProfile = true,
+                        enabledNotification = true
+                    )
+                )
+            )
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ProfileScreenLoadingDarkPreview() {
+    SchoolmateTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+        ) {
+            PureProfileScreen(profile = null)
         }
     }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-private fun ProfileScreenLightPreview() {
+private fun ProfileScreenCompleteLightPreview() {
     SchoolmateTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ProfileScreen()
+            PureProfileScreen(
+                profile = Profile(
+                    code = 0,
+                    name = "유광무",
+                    studentId = "2019156023",
+                    major = "컴퓨터공학부 소프트웨어 전공",
+                    setting = Setting(
+                        enabledProfile = true,
+                        enabledNotification = true
+                    )
+                )
+            )
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+private fun ProfileScreenLoadingLightPreview() {
+    SchoolmateTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+        ) {
+            PureProfileScreen(profile = null)
         }
     }
 }
