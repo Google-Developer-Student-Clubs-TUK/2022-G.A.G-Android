@@ -3,11 +3,12 @@ package com.haeyum.schoolmate.ui.component
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -28,24 +29,26 @@ object ToggleComponent {
     fun Toggle(value: Boolean, onValueChange: (Boolean) -> Unit) {
         val circleX by animateDpAsState(targetValue = if (value) 22.dp else 0.dp)
 
-        Row(modifier = Modifier
-            .size(width = 42.dp, height = 20.dp)
-            .clickable {
+        Button(
+            modifier = Modifier.size(width = 42.dp, height = 20.dp),
+            shape = AbsoluteRoundedCornerShape(100.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = if (value) MaterialTheme.colors.secondary else MaterialTheme.colors.secondaryVariant),
+            contentPadding = PaddingValues(0.dp),
+            onClick = {
                 onValueChange(!value)
             }
-            .background(
-                color = if (value) MaterialTheme.colors.secondary else MaterialTheme.colors.secondaryVariant,
-                shape = AbsoluteRoundedCornerShape(100.dp)
-            )
-            .padding(2.dp),
-            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .offset(x = circleX)
-                    .background(color = Color.White, shape = CircleShape)
-            )
+            Row(
+                modifier = Modifier.fillMaxSize().padding(2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .offset(x = circleX)
+                        .background(color = Color.White, shape = CircleShape)
+                )
+            }
         }
     }
 
