@@ -3,13 +3,14 @@ package com.haeyum.schoolmate.ui.component
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -31,19 +32,20 @@ object HeaderComponent {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(10.dp)
                 .background(backgroundColor)
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = "back",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable(onClick = onBackClick),
-                colorFilter = ColorFilter.tint(TextColor)
-            )
+            IconButton(onClick = onBackClick, modifier = Modifier.size(24.dp)) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(TextColor)
+                )
+            }
             Text(
                 text = title,
                 color = TextColor,
