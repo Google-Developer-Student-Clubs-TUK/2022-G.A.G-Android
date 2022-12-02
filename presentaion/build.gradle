@@ -84,4 +84,7 @@ dependencies {
     //constraintLayout
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
+    //to statusbar color change
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
+
 }

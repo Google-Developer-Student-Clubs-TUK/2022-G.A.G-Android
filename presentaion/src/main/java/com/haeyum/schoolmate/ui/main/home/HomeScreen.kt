@@ -22,11 +22,14 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
+import com.haeyum.schoolmate.supports.drawBorder
+import com.haeyum.schoolmate.supports.statusBarColor
 import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
+    statusBarColor(rememberSystemUiController() , Color.Transparent)
 
 
     viewModel.getData()
@@ -87,11 +90,7 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
             .clip(shape = RoundedCornerShape(12.dp))
             .background(MaterialTheme.colors.surface)
             .then(
-                if (isSystemInDarkTheme()) Modifier else Modifier.border(
-                    width = 1.dp,
-                    color = MaterialTheme.colors.secondaryVariant,
-                    shape = RoundedCornerShape(12.dp)
-                )
+                drawBorder()
             )
             .padding(20.dp),
             verticalArrangement = Arrangement.Center) {
@@ -169,11 +168,7 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
                 .clip(shape = RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colors.surface)
                 .then(
-                    if (isSystemInDarkTheme()) Modifier else Modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colors.secondaryVariant,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    drawBorder()
                 )
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -283,11 +278,7 @@ fun TodoList(index: Int, data: TodoDto) {
                 .clip(shape = RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colors.surface)
                 .then(
-                    if (isSystemInDarkTheme()) Modifier else Modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colors.secondaryVariant,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    drawBorder()
                 )
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically,
