@@ -4,8 +4,10 @@ package com.haeyum.schoolmate.ui.main.home
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,17 +21,22 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
 
+
     viewModel.getData()
     val timeScheduleInfo = viewModel.timeScheduleInfo.value
     val todoInfo = viewModel.todoInfo.value
 
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+    ConstraintLayout(modifier = Modifier
+        .fillMaxWidth()
+        .verticalScroll(rememberScrollState())
+        ) {
         val profile = createRef()
         val content = createRef()
         val nextTimetable = createRef()
@@ -45,8 +52,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
 private fun ConstraintLayoutScope.ContentFrame(
     contentRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
-    tempData: List<TimeScheduleDto>,
-    tempTodo: List<TodoDto>
+    timeScheduleInfo: List<TimeScheduleDto>,
+    todoInfo: List<TodoDto>
 ) {
     Column(
         modifier = Modifier
@@ -55,7 +62,7 @@ private fun ConstraintLayoutScope.ContentFrame(
             .padding(top = 80.dp)
             .constrainAs(contentRef) {
                 top.linkTo(profileRef.bottom)
-            }, content = Contents(tempData, tempTodo)
+            }, content = Contents(timeScheduleInfo, todoInfo)
 
     )
 }
@@ -127,7 +134,7 @@ private fun Todo(todoInfoList: List<TodoDto>) {
     )
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         todoInfoList.forEachIndexed() { index, data ->
             TodoList(index, data)
