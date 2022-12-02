@@ -28,7 +28,8 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.SchoolMate"/>
+            android:theme="@style/Theme.SchoolMate"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>
