@@ -8,9 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,20 +20,24 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
-import com.haeyum.schoolmate.supports.statusBarColor
-import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
-    statusBarColor(rememberSystemUiController() , Color.Transparent)
+fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
+//    val systemUiController = rememberSystemUiController()
+//    LaunchedEffect(true) {
+//        statusBarColor(systemUiController, Color.Transparent)
+//    }
 
-    viewModel.getData()
+    SideEffect {
+        viewModel.getData()
+    }
+
     val timeScheduleInfo = viewModel.timeScheduleInfo.value
     val todoInfo = viewModel.todoInfo.value
 
@@ -41,13 +46,11 @@ fun HomeScreen(viewModel: HomeViewModel) {
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        val profile = createRef()
-        val content = createRef()
-        val nextTimetable = createRef()
+        val (profileRef, contentRef, nextTimetableRef) = createRefs()
 
-        ProfileFrame(profile)
-        NextTimeTableFrame(nextTimetable, content, profile)
-        ContentFrame(content, profile, timeScheduleInfo, todoInfo)
+        ProfileFrame(profileRef)
+        NextTimeTableFrame(nextTimetableRef, contentRef, profileRef)
+        ContentFrame(contentRef, profileRef, timeScheduleInfo, todoInfo)
     }
 
 }
@@ -59,18 +62,18 @@ private fun ConstraintLayoutScope.ContentFrame(
     timeScheduleInfo: List<TimeScheduleDto>,
     todoInfo: List<TodoDto>
 ) {
-    SchoolmateTheme {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colors.background)
-                .fillMaxWidth()
-                .padding(top = 80.dp)
-                .constrainAs(contentRef) {
-                    top.linkTo(profileRef.bottom)
-                }, content = Contents(timeScheduleInfo, todoInfo)
 
-        )
-    }
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxWidth()
+            .padding(top = 80.dp)
+            .constrainAs(contentRef) {
+                top.linkTo(profileRef.bottom)
+            }, content = Contents(timeScheduleInfo, todoInfo)
+
+    )
+
 }
 
 @Composable
@@ -79,41 +82,41 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
     scheduleRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference
 ) {
-    SchoolmateTheme {
-        Column(modifier = Modifier
-            .zIndex(1f)
-            .constrainAs(nextTimetableRef) {
-                top.linkTo(scheduleRef.top)
-                bottom.linkTo(profileRef.bottom)
-            }
-            .padding(horizontal = 30.dp)
-            .clip(shape = RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colors.surface)
-            .then(
-                drawBorder()
-            )
-            .padding(20.dp),
-            verticalArrangement = Arrangement.Center) {
-            NextTimetable()
+
+    Column(modifier = Modifier
+        .zIndex(1f)
+        .constrainAs(nextTimetableRef) {
+            top.linkTo(scheduleRef.top)
+            bottom.linkTo(profileRef.bottom)
         }
+        .padding(horizontal = 30.dp)
+        .background(
+            MaterialTheme.colors.surface,
+            shape = RoundedCornerShape(12.dp)
+        )
+        .drawBorder()
+        .padding(20.dp),
+        verticalArrangement = Arrangement.Center) {
+        NextTimetable()
     }
+
 }
 
 @Composable
 private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference) {
-    SchoolmateTheme {
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colors.secondary)
-                .fillMaxWidth()
-                .padding(top = 44.dp, bottom = 67.dp)
-                .padding(horizontal = 30.dp)
-                .constrainAs(profileRef) {}
 
-        ) {
-            UserInfo()
-        }
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colors.secondary)
+            .fillMaxWidth()
+            .padding(top = 44.dp, bottom = 67.dp)
+            .padding(horizontal = 30.dp)
+            .constrainAs(profileRef) {}
+
+    ) {
+        UserInfo()
     }
+
 }
 
 
@@ -162,54 +165,53 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
         color = TextColor,
         modifier = Modifier.padding(bottom = 20.dp)
     )
-    SchoolmateTheme {
-        Column(
-            modifier = Modifier
-                .clip(shape = RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colors.surface)
-                .then(
-                    drawBorder()
-                )
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            timeScheduleInfo.forEach { data ->
-                TimeScheduleList(data)
-            }
+
+    Column(
+        modifier = Modifier
+
+            .background(
+                MaterialTheme.colors.surface, shape = RoundedCornerShape(12.dp)
+            )
+            .drawBorder()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        timeScheduleInfo.forEach { data ->
+            TimeScheduleList(data)
         }
     }
+
 }
 
 @Composable
 private fun NextTimetable() {
-    SchoolmateTheme {
 
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "다음 수업까지",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal,
-                color = TextColor
-
-            )
-            Text(
-                text = "오후 3시 20분",
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colors.primary
-            )
-        }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(
-            text = "프로그래밍 10분",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextColor,
+            text = "다음 수업까지",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Normal,
+            color = TextColor
+
+        )
+        Text(
+            text = "오후 3시 20분",
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Normal,
+            color = MaterialTheme.colors.primary
         )
     }
+    Text(
+        text = "프로그래밍 10분",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = TextColor,
+    )
+
 }
 
 @Composable
@@ -269,70 +271,71 @@ fun TodoList(index: Int, data: TodoDto) {
 
 
     val color = if (data.is_submit) Color(0xFF3C5CFF) else Color(0xFFFF5C17)
-    SchoolmateTheme {
 
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colors.surface,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .drawBorder()
+            .padding(20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colors.surface)
-                .then(
-                    drawBorder()
-                )
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .size(35.dp)
+                    .background(
+                        color = color,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(35.dp)
-                        .clip(CircleShape)
-                        .background(color = color),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = (index + 1).toString(),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextColor,
-                    )
-                }
-                Column() {
-                    Text(
-                        text = data.name,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextColor,
-
-                        )
-                    Text(
-                        text = data.major + "과제",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = TextColor,
-                    )
-                }
-            }
-
-            if (data.is_submit) {
-                Canvas(modifier = Modifier.size(20.dp), onDraw = {
-                    drawCircle(color = color)
-                })
-            } else {
                 Text(
-                    text = data.time,
+                    text = (index + 1).toString(),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextColor,
+                )
+            }
+            Column() {
+                Text(
+                    text = data.name,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextColor,
+
+                    )
+                Text(
+                    text = data.major + "과제",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     color = TextColor,
                 )
             }
-
         }
+
+        if (data.is_submit) {
+            Canvas(modifier = Modifier.size(20.dp), onDraw = {
+                drawCircle(color = color)
+            })
+        } else {
+            Text(
+                text = data.time,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = TextColor,
+            )
+        }
+
     }
+
 }
 
