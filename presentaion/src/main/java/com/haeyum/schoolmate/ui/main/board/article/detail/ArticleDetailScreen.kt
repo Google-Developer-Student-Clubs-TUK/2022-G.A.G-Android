@@ -31,10 +31,10 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ColumnScope.ArticleDetailScreen() {
+fun ArticleDetailScreen() {
     val (reply, setReply) = remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.weight(1f)) {
+    Column(modifier = Modifier.fillMaxSize()) {
         HeaderComponent.Header(
             title = "프로그래밍 게시판",
             onBackClick = {

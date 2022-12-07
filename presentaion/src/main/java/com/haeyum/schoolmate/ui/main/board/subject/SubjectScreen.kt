@@ -25,10 +25,10 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ColumnScope.SubjectScreen(onNavigateToArticleList: (subjectId: String) -> Unit) {
+fun SubjectScreen(onNavigateToArticleList: (subjectId: String) -> Unit) {
     Column(
         modifier = Modifier
-            .weight(1f)
+            .fillMaxSize()
             .padding(horizontal = 30.dp)
     ) {
         HeaderComponent.LargeHeader(
