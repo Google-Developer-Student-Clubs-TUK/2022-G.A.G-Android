@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,10 +61,8 @@ private fun SubjectItem(name: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colors.surface,
-                shape = RoundedCornerShape(12.dp)
-            )
+            .clip(RoundedCornerShape(12.dp))
+            .background(color = MaterialTheme.colors.surface)
             .then(
                 if (isSystemInDarkTheme()) Modifier else Modifier.border(
                     width = 1.dp,
