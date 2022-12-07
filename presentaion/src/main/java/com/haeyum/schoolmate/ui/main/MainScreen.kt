@@ -1,55 +1,83 @@
 package com.haeyum.schoolmate.ui.main
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.Snackbar
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.haeyum.schoolmate.R
 import com.haeyum.schoolmate.ui.main.model.BottomNavigationState
 import com.haeyum.schoolmate.ui.main.navigation.MainNavRoute
 import com.haeyum.schoolmate.ui.main.navigation.SetupMainNavGraph
-import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel = hiltViewModel(), onFinishEvent: () -> Unit) {
     val navController = rememberNavController()
 
     val (bottomNavigationState, setBottomNavigationState) = remember {
         mutableStateOf<BottomNavigationState>(BottomNavigationState.Home)
     }
 
-    SchoolmateTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .background(MaterialTheme.colors.background)
-                .imePadding()
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .background(MaterialTheme.colors.background)
+            .imePadding()
+    ) {
+        Box(modifier = Modifier.weight(1f)) {
+            val isShowBackPressSnackbar =
+                viewModel.isShowBackPressSnackbar.collectAsState().value
+
+            Column(modifier = Modifier.fillMaxSize()) {
                 SetupMainNavGraph(navHostController = navController)
             }
-            BottomNavigation(
-                state = bottomNavigationState,
-                onStateChange = setBottomNavigationState
-            )
+
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isShowBackPressSnackbar,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+            ) {
+                Snackbar(
+                    modifier = Modifier.padding(15.dp),
+                    backgroundColor = MaterialTheme.colors.secondary
+                ) {
+                    Text(text = "뒤로가기를 한번 더 누르면 종료됩니다.", color = Color.White, fontSize = 14.sp)
+                }
+            }
         }
+        BottomNavigation(
+            state = bottomNavigationState,
+            onStateChange = setBottomNavigationState
+        )
+    }
+
+    BackHandler {
+        viewModel.backPress()
     }
 
     LaunchedEffect(bottomNavigationState) {
@@ -57,6 +85,12 @@ fun MainScreen() {
             BottomNavigationState.Home -> navController.navigate(MainNavRoute.Home.route)
             BottomNavigationState.Board -> navController.navigate(MainNavRoute.Board.route)
             BottomNavigationState.Profile -> navController.navigate(MainNavRoute.Profile.route)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.finishEvent.collectLatest {
+            onFinishEvent()
         }
     }
 }
@@ -129,12 +163,12 @@ private fun BottomNavigationItem(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun MainScreenLightPreview() {
-    MainScreen()
+    MainScreen(viewModel = MainViewModel(), onFinishEvent = {})
 }
 
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun MainScreenDarkPreview() {
-    MainScreen()
+    MainScreen(viewModel = MainViewModel(), onFinishEvent = {})
 }
