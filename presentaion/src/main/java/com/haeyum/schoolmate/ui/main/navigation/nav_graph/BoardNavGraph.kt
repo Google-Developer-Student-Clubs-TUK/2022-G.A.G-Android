@@ -19,19 +19,24 @@ fun NavGraphBuilder.boardNavGraph(navController: NavController) {
         route = MainNavRoute.BOARD_ROUTE
     ) {
         composable(MainNavRoute.Board.Subject.route) {
-            SubjectScreen(onNavigateToArticleList = {
-                navController.navigate(MainNavRoute.Board.ArticleList.createRoute(it))
-            })
+            SubjectScreen(
+                onNavigateToArticleList = {
+                    navController.navigate(MainNavRoute.Board.ArticleList.createRoute(it))
+                }
+            )
         }
 
         composable(MainNavRoute.Board.ArticleList.route) {
-            ArticleListScreen(onNavigateToDetail = {
-                navController.navigate(MainNavRoute.Board.ArticleDetail.createRoute(it))
-            })
+            ArticleListScreen(
+                onNavigateToDetail = {
+                    navController.navigate(MainNavRoute.Board.ArticleDetail.createRoute(it))
+                },
+                onNavigateUp = navController::navigateUp
+            )
         }
 
         composable(MainNavRoute.Board.ArticleDetail.route) {
-            ArticleDetailScreen()
+            ArticleDetailScreen(onNavigateUp = navController::navigateUp)
         }
     }
 }

@@ -5,6 +5,7 @@
 package com.haeyum.schoolmate.ui.main.board.article.detail
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -31,15 +32,13 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ArticleDetailScreen() {
+fun ArticleDetailScreen(onNavigateUp: () -> Unit) {
     val (reply, setReply) = remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize()) {
         HeaderComponent.Header(
             title = "프로그래밍 게시판",
-            onBackClick = {
-                // TODO BACK
-            }
+            onBackClick = onNavigateUp
         )
         Column(
             modifier = Modifier
@@ -95,6 +94,8 @@ fun ArticleDetailScreen() {
             }
         }
     }
+
+    BackHandler(onBack = onNavigateUp)
 }
 
 @Composable
@@ -221,7 +222,7 @@ private fun ArticleDetailDarkPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ArticleDetailScreen()
+            ArticleDetailScreen(onNavigateUp = {})
         }
     }
 }
@@ -235,7 +236,7 @@ private fun ArticleDetailLightPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ArticleDetailScreen()
+            ArticleDetailScreen(onNavigateUp = {})
         }
     }
 }
