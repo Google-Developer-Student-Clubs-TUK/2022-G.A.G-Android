@@ -35,7 +35,7 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginSuccess: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,7 +96,7 @@ fun LoginScreen() {
             )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = onLoginSuccess,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 30.dp),
@@ -179,6 +179,6 @@ private fun AccountTextField(
 @Composable
 fun LoginScreenPreview() {
     SchoolmateTheme {
-        LoginScreen()
+        LoginScreen(onLoginSuccess = {})
     }
 }
