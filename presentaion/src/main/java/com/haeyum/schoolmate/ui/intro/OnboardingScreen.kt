@@ -49,9 +49,7 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
         val pagerState = rememberPagerState()
 
         TextButton(
-            onClick = {
-
-            },
+            onClick = onNavigateToLogin,
             modifier = Modifier
                 .align(alignment = Alignment.TopEnd)
                 .padding(end = 22.dp),
