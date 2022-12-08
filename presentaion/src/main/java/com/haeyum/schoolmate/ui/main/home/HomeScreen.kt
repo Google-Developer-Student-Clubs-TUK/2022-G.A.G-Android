@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
+import com.haeyum.schoolmate.ui.theme.LightBlue
+import com.haeyum.schoolmate.ui.theme.Orange
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
@@ -255,7 +258,7 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
 @Composable
 fun TodoList(index: Int, data: TodoDto) {
 
-    val color = if (data.is_submit) Color(0xFF3C5CFF) else Color(0xFFFF5C17)
+    val color = remember(data.is_submit){ (if (data.is_submit) Orange else LightBlue) }
 
     Row(
         modifier = Modifier
