@@ -52,7 +52,6 @@ class HomeViewModel @Inject constructor(): ViewModel() {
                 is_submit = true
             ),
         )
-
     }
 
 

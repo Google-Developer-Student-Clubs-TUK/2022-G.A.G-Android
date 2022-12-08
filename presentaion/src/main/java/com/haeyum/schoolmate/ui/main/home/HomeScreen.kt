@@ -47,7 +47,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             .verticalScroll(rememberScrollState())
     ) {
         val (profileRef, contentRef, nextTimetableRef) = createRefs()
-
         ProfileFrame(profileRef)
         NextTimeTableFrame(nextTimetableRef, contentRef, profileRef)
         ContentFrame(contentRef, profileRef, timeScheduleInfo, todoInfo)
@@ -62,7 +61,6 @@ private fun ConstraintLayoutScope.ContentFrame(
     timeScheduleInfo: List<TimeScheduleDto>,
     todoInfo: List<TodoDto>
 ) {
-
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
@@ -82,7 +80,6 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
     scheduleRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference
 ) {
-
     Column(modifier = Modifier
         .zIndex(1f)
         .constrainAs(nextTimetableRef) {
@@ -104,7 +101,6 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
 
 @Composable
 private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference) {
-
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.secondary)
@@ -112,7 +108,6 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
             .padding(top = 44.dp, bottom = 67.dp)
             .padding(horizontal = 30.dp)
             .constrainAs(profileRef) {}
-
     ) {
         UserInfo()
     }
@@ -134,7 +129,6 @@ private fun Contents(
             TimeSchedule(timeScheduleInfo)
             Todo(todoInfo)
         }
-
     }
 
 @Composable
@@ -146,7 +140,6 @@ private fun Todo(todoInfoList: List<TodoDto>) {
         color = TextColor,
         modifier = Modifier.padding(bottom = 20.dp, top = 30.dp)
     )
-
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -165,10 +158,8 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
         color = TextColor,
         modifier = Modifier.padding(bottom = 20.dp)
     )
-
     Column(
         modifier = Modifier
-
             .background(
                 MaterialTheme.colors.surface, shape = RoundedCornerShape(12.dp)
             )
@@ -185,8 +176,6 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
 
 @Composable
 private fun NextTimetable() {
-
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -196,7 +185,6 @@ private fun NextTimetable() {
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
-
         )
         Text(
             text = "오후 3시 20분",
@@ -211,7 +199,6 @@ private fun NextTimetable() {
         fontWeight = FontWeight.Bold,
         color = TextColor,
     )
-
 }
 
 @Composable
@@ -262,16 +249,13 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
             color = TextColor
         )
     }
-
 }
 
 
 @Composable
 fun TodoList(index: Int, data: TodoDto) {
 
-
     val color = if (data.is_submit) Color(0xFF3C5CFF) else Color(0xFFFF5C17)
-
 
     Row(
         modifier = Modifier
@@ -311,7 +295,6 @@ fun TodoList(index: Int, data: TodoDto) {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextColor,
-
                     )
                 Text(
                     text = data.major + "과제",
@@ -321,7 +304,6 @@ fun TodoList(index: Int, data: TodoDto) {
                 )
             }
         }
-
         if (data.is_submit) {
             Canvas(modifier = Modifier.size(20.dp), onDraw = {
                 drawCircle(color = color)
