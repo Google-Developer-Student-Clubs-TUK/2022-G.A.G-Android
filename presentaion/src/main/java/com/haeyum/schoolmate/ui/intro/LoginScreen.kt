@@ -2,6 +2,8 @@
  * Created by PangMoo on 2022/12/8
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.haeyum.schoolmate.ui.intro
 
 import androidx.compose.animation.AnimatedVisibility
@@ -14,8 +16,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -48,6 +56,12 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             mutableStateOf("")
         }
 
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        val studentIdFocusRequester by remember { mutableStateOf(FocusRequester()) }
+        val passwordFocusRequester by remember { mutableStateOf(FocusRequester()) }
+
         Text(
             text = "Login",
             modifier = Modifier
@@ -67,29 +81,39 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             AccountTextField(
                 label = "학번",
                 value = studentId,
-                onValueChange = setStudentId,
+                onValueChange = {
+                    setStudentId(it.take(10).replace(Regex("[^0-9]"), ""))
+                },
+                modifier = Modifier.focusRequester(studentIdFocusRequester),
+                hint = "학번 10자리",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
                     onNext = {
-
+                        passwordFocusRequester.requestFocus()
                     }
                 )
             )
             AccountTextField(
                 label = "비밀번호",
                 value = password,
-                onValueChange = setPassword,
-                modifier = Modifier.padding(top = 15.dp),
+                onValueChange = {
+                    setPassword(it.take(30))
+                },
+                modifier = Modifier
+                    .padding(top = 15.dp)
+                    .focusRequester(passwordFocusRequester),
+                hint = "E-Class 비밀번호",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
                     onNext = {
-
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
                     }
                 ),
                 visualTransformation = PasswordVisualTransformation()
@@ -155,7 +179,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                         onClick = { showTermsAlert = false },
                         modifier = Modifier
                             .align(Alignment.End)
-                            .padding(end = 20.dp, bottom = 20.dp),
+                            .padding(end = 22.dp, bottom = 16.dp),
                         contentPadding = PaddingValues(4.dp),
                     ) {
                         Text(
@@ -185,6 +209,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 }
             )
         }
+
+        LaunchedEffect(Unit) {
+            studentIdFocusRequester.requestFocus()
+        }
     }
 }
 
@@ -194,6 +222,7 @@ private fun AccountTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    hint: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None
@@ -234,7 +263,17 @@ private fun AccountTextField(
             keyboardActions = keyboardActions,
             singleLine = true,
             visualTransformation = visualTransformation
-        )
+        ) { innerTextField ->
+            if (value.isEmpty())
+                Text(
+                    text = hint,
+                    modifier = Modifier.alpha(0.3f),
+                    color = if (isSystemInDarkTheme()) Color(0xFFB8B8D2) else Color.Black,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Light
+                )
+            innerTextField()
+        }
     }
 }
 
