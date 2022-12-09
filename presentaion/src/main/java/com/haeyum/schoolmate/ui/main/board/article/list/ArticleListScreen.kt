@@ -5,6 +5,7 @@
 package com.haeyum.schoolmate.ui.main.board.article.list
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,13 +28,11 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ColumnScope.ArticleListScreen(onNavigateToDetail: (String) -> Unit) {
-    Column(modifier = Modifier.weight(1f)) {
+fun ArticleListScreen(onNavigateToDetail: (String) -> Unit, onNavigateUp: () -> Unit) {
+    Column(modifier = Modifier.fillMaxSize()) {
         HeaderComponent.Header(
             title = "프로그래밍 게시판",
-            onBackClick = {
-                // TODO BACK
-            }
+            onBackClick = onNavigateUp
         )
         Column(
             modifier = Modifier
@@ -63,6 +62,8 @@ fun ColumnScope.ArticleListScreen(onNavigateToDetail: (String) -> Unit) {
             }
         }
     }
+
+    BackHandler(onBack = onNavigateUp)
 }
 
 @Composable
@@ -148,7 +149,7 @@ fun ArticleListScreenDarkPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ArticleListScreen(onNavigateToDetail = {})
+            ArticleListScreen(onNavigateToDetail = {}, onNavigateUp = {})
         }
     }
 }
@@ -162,7 +163,7 @@ fun ArticleListScreenLightPreview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            ArticleListScreen(onNavigateToDetail = {})
+            ArticleListScreen(onNavigateToDetail = {}, onNavigateUp = {})
         }
     }
 }

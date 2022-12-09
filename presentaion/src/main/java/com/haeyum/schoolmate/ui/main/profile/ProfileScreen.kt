@@ -30,14 +30,14 @@ import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import com.haeyum.schoolmate.ui.theme.TextColor
 
 @Composable
-fun ColumnScope.ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     val profile = viewModel.profile.collectAsState().value
 
     PureProfileScreen(profile)
 }
 
 @Composable
-private fun ColumnScope.PureProfileScreen(profile: Profile?) {
+private fun PureProfileScreen(profile: Profile?) {
     val (enabledProfile, setEnabledProfile) = remember {
         mutableStateOf(false)
     }
@@ -47,7 +47,7 @@ private fun ColumnScope.PureProfileScreen(profile: Profile?) {
 
     Column(
         modifier = Modifier.Companion
-            .weight(1f)
+            .fillMaxSize(1f)
             .padding(horizontal = 30.dp)
     ) {
         HeaderComponent.LargeHeader(title = "프로필", description = "나의 멋진 설명을 담아보았어요")
