@@ -4,6 +4,8 @@ plugins {
     id 'kotlinx-serialization'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -72,6 +74,12 @@ dependencies {
 
     // lottie
     implementation 'com.airbnb.android:lottie-compose:5.2.0'
+
+    // firebase service
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
     // default
     implementation 'androidx.core:core-ktx:1.9.0'
