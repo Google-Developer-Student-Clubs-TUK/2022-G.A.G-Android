@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.haeyum.schoolmate.ui.main.MainActivity
 import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,18 +22,35 @@ class IntroActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SchoolmateTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting2("Android")
+                val systemUiController = rememberSystemUiController()
+                val statusBarColor = MaterialTheme.colors.background
+
+                var navigate by remember {
+                    mutableStateOf(0)
+                }
+
+                when (navigate) {
+                    0 -> OnboardingScreen {
+                        navigate = 1
+                    }
+                    1 -> LoginScreen {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                    else -> {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    }
+                }
+
+                LaunchedEffect(statusBarColor) {
+                    systemUiController.setStatusBarColor(statusBarColor)
                 }
             }
         }
 
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+//        startActivity(Intent(this, MainActivity::class.java))
+//        finish()
     }
 }
 
