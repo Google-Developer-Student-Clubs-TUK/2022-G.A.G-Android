@@ -10,6 +10,7 @@ import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import utils.TimeUtil
+import utils.toTimeTable
 import javax.inject.Inject
 
 
@@ -29,19 +30,19 @@ class HomeViewModel @Inject constructor(): ViewModel() {
 
     val temp: List<TimeScheduleEntity> = (listOf(
         TimeScheduleEntity(
-            id = 1,
+            id = "asd",
             name = "수학",
             room = "e동 423호",
             startTime = "15:30"
         ),
         TimeScheduleEntity(
-            id = 1,
+            id = "Asd",
             name = "영어",
             room = "e동 423호",
             startTime = "19:30"
         ),
         TimeScheduleEntity(
-            id = 1,
+            id = "asd",
             name = "영어",
             room = "e동 423호",
             startTime = "23:59"
@@ -50,8 +51,6 @@ class HomeViewModel @Inject constructor(): ViewModel() {
 
     fun getData() {
         _notifyTimeInfo.value = calNextTime(temp)
-
-
         _timeScheduleInfo.value = listOf(
             TimeScheduleDto(location = "산융 205호", major = "수학2", time = "11:30~12:20"),
             TimeScheduleDto(location = "산융 206호", major = "수학2", time = "11:30~12:20"),
