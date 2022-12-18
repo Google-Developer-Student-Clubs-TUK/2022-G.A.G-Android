@@ -22,8 +22,9 @@ class HomeViewModel @Inject constructor(): ViewModel() {
     private val _todoInfo: MutableState<List<TodoDto>> = mutableStateOf(listOf())
     val todoInfo: State<List<TodoDto>> = _todoInfo
 
-    private val _notifyTimeInfo: MutableState<NotifyTime>? = null
-    val notifyTimeInfo: State<NotifyTime>? = _notifyTimeInfo
+    private val _notifyTimeInfo: MutableState<NotifyTime> = mutableStateOf(NotifyTime(false, "초기값", null, null, null))
+
+    val notifyTimeInfo: State<NotifyTime> = _notifyTimeInfo
 
 
     val temp: List<TimeScheduleEntity> = (listOf(
@@ -43,12 +44,12 @@ class HomeViewModel @Inject constructor(): ViewModel() {
             id = 1,
             name = "영어",
             room = "e동 423호",
-            startTime = "19:40"
+            startTime = "23:40"
         ),
     ))
 
     fun getData() {
-        _notifyTimeInfo?.value = calNextTime(temp)
+        _notifyTimeInfo.value = calNextTime(temp)
 
 
         _timeScheduleInfo.value = listOf(

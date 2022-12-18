@@ -13,7 +13,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,6 +21,7 @@ import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.haeyum.domain.data.notifyTime.NotifyTime
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
@@ -43,6 +43,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 
     val timeScheduleInfo = viewModel.timeScheduleInfo.value
     val todoInfo = viewModel.todoInfo.value
+    val notifyTimeInfo = viewModel.notifyTimeInfo.value
 
     ConstraintLayout(
         modifier = Modifier
@@ -51,7 +52,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     ) {
         val (profileRef, contentRef, nextTimetableRef) = createRefs()
         ProfileFrame(profileRef)
-        NextTimeTableFrame(nextTimetableRef, contentRef, profileRef)
+        NextTimeTableFrame(nextTimetableRef, contentRef, profileRef, notifyTimeInfo)
         ContentFrame(contentRef, profileRef, timeScheduleInfo, todoInfo)
     }
 
@@ -81,7 +82,8 @@ private fun ConstraintLayoutScope.ContentFrame(
 private fun ConstraintLayoutScope.NextTimeTableFrame(
     nextTimetableRef: ConstrainedLayoutReference,
     scheduleRef: ConstrainedLayoutReference,
-    profileRef: ConstrainedLayoutReference
+    profileRef: ConstrainedLayoutReference,
+    notifyTimeInfo: NotifyTime
 ) {
     Column(modifier = Modifier
         .zIndex(1f)
@@ -97,7 +99,7 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
         .drawBorder()
         .padding(20.dp),
         verticalArrangement = Arrangement.Center) {
-        NextTimetable()
+        NextTimetable(notifyTimeInfo)
     }
 
 }
@@ -178,30 +180,35 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
 }
 
 @Composable
-private fun NextTimetable() {
+private fun NextTimetable(notifyTimeInfo: NotifyTime) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "다음 수업까지",
+            text = notifyTimeInfo.message,
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
         )
+        notifyTimeInfo.time?.let {
+            Text(
+                text = it,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colors.primary
+            )
+        }
+    }
+
+    if(notifyTimeInfo.isLeft) {
         Text(
-            text = "오후 3시 20분",
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colors.primary
+            text = notifyTimeInfo.major + " " + notifyTimeInfo.leftTime,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = TextColor,
         )
     }
-    Text(
-        text = "프로그래밍 10분",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        color = TextColor,
-    )
 }
 
 @Composable
@@ -258,7 +265,7 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
 @Composable
 fun TodoList(index: Int, data: TodoDto) {
 
-    val color = remember(data.is_submit){ (if (data.is_submit) Orange else LightBlue) }
+    val color = remember(data.is_submit) { (if (data.is_submit) Orange else LightBlue) }
 
     Row(
         modifier = Modifier
@@ -298,7 +305,7 @@ fun TodoList(index: Int, data: TodoDto) {
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextColor,
-                    )
+                )
                 Text(
                     text = data.major + "과제",
                     fontSize = 12.sp,
