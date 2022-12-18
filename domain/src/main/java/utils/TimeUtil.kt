@@ -7,6 +7,9 @@ import java.util.*
 object TimeUtil {
     var KR_TIME_DIFF = 9 * 60 * 60 * 1000; //UTC to KST
 
+    fun getCurTime(): Long {
+        return this.tomillisecond(this.toString(System.currentTimeMillis()+KR_TIME_DIFF))
+    }
 
     fun tomillisecond(time: String): Long {
         return SimpleDateFormat("HH:mm", Locale.KOREA).parse(time).getTime()
