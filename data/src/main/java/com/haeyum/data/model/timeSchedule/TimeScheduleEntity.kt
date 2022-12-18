@@ -2,7 +2,7 @@ package com.haeyum.data.model.timeSchedule
 
 
 data class TimeScheduleEntity (
-    val id: Int,
+    val id: String,
     val name: String,
     val room: String,
     val startTime: String,

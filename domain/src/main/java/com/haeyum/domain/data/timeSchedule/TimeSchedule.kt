@@ -5,8 +5,7 @@
 package com.haeyum.domain.data.timeSchedule
 
 data class TimeSchedule(
-    val id: Int,
     val name: String,
     val room: String,
-    val startTime: String,
+    val startTime: Long,
 )

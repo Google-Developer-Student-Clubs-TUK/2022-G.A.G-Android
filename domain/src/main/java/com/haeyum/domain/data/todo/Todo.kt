@@ -5,8 +5,7 @@
 package com.haeyum.domain.data.todo
 
 data class Todo(
-    val subjectId: Int,
     val name: String,
-    val deadline: String,
+    val deadline: Long,
     val isDone: Boolean,
 )

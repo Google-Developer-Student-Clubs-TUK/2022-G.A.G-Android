@@ -44,7 +44,7 @@ class HomeViewModel @Inject constructor(): ViewModel() {
             id = 1,
             name = "영어",
             room = "e동 423호",
-            startTime = "23:40"
+            startTime = "23:59"
         ),
     ))
 
@@ -101,10 +101,10 @@ class HomeViewModel @Inject constructor(): ViewModel() {
                 preName = data.name
                 continue
             }
-            val leftTime = TimeUtil.toString(diff)
+            val leftTime = TimeUtil.toStringKorean(diff)
 
             return if(data.name.equals(preName)){
-                NotifyTime(true, "수업 종료까지", leftTime, data.startTime, data.name)
+                NotifyTime(true, "수업 종료까지", leftTime, TimeUtil.toStringAMS(TimeUtil.tomillisecond(data.startTime)), data.name)
             } else{
                 NotifyTime(true, "다음 수업까지", leftTime, data.startTime, data.name)
             }

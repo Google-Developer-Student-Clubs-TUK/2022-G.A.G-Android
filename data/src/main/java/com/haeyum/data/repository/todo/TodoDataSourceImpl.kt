@@ -11,21 +11,21 @@ class TodoDataSourceImpl : TodoDataSource {
             message = "success",
             result = listOf(
                 TodoEntity(
-                    subjectId = 1,
+                    subjectId = "ASKDKSA@2032",
                     name = "영어",
-                    deadline = "11.21 오전 11:00",
+                    deadline = "2022-12-02T15:30:00",
                     isDone = false
                 ),
                 TodoEntity(
-                    subjectId = 1,
+                    subjectId = "ASKDKSA@2032",
                     name = "영어",
-                    deadline = "11.21 오전 11:00",
+                    deadline = "2022-12-02T15:30:00",
                     isDone = false
                 ),
                 TodoEntity(
-                    subjectId = 1,
+                    subjectId = "ASKDKSA@2032",
                     name = "영어",
-                    deadline = "11.21 오전 11:00",
+                    deadline = "2022-12-02T15:30:00",
                     isDone = false
                 )
             )

@@ -12,22 +12,22 @@ class TimeScheduleDataSourceImpl : TimeScheduleDataSource {
             message = "success",
             result = listOf(
                 TimeScheduleEntity(
-                    id = 1,
+                    id = "ASKDKSA@2032",
                     name = "영어",
                     room = "e동 423호",
                     startTime = "15:30"
                 ),
                 TimeScheduleEntity(
-                    id = 1,
-                    name = "영어",
+                    id = "ASKDKSA@2032",
+                    name = "수학",
                     room = "e동 423호",
-                    startTime = "15:30"
+                    startTime = "19:30"
                 ),
                 TimeScheduleEntity(
-                    id = 1,
-                    name = "영어",
+                    id = "ASKDKSA@2032",
+                    name = "수학",
                     room = "e동 423호",
-                    startTime = "15:30"
+                    startTime = "20:30"
                 ),
             )
         )
