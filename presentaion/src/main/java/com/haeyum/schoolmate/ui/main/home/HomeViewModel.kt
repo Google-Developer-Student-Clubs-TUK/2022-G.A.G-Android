@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.haeyum.data.model.timeSchedule.TimeScheduleEntity
 import com.haeyum.domain.data.notifyTime.NotifyTime
+import com.haeyum.domain.data.timeSchedule.TimeSchedule
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,8 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(): ViewModel() {
 
-    private val _timeScheduleInfo: MutableState<List<TimeScheduleDto>> = mutableStateOf(listOf())
-    val timeScheduleInfo: State<List<TimeScheduleDto>> = _timeScheduleInfo
+    private val _timeScheduleInfo: MutableState<List<TimeSchedule>> = mutableStateOf(listOf())
+    val timeScheduleInfo: State<List<TimeSchedule>> = _timeScheduleInfo
 
     private val _todoInfo: MutableState<List<TodoDto>> = mutableStateOf(listOf())
     val todoInfo: State<List<TodoDto>> = _todoInfo
@@ -28,33 +29,29 @@ class HomeViewModel @Inject constructor(): ViewModel() {
     val notifyTimeInfo: State<NotifyTime> = _notifyTimeInfo
 
 
-    val temp: List<TimeScheduleEntity> = (listOf(
-        TimeScheduleEntity(
-            id = "asd",
-            name = "수학",
-            room = "e동 423호",
-            startTime = "15:30"
-        ),
-        TimeScheduleEntity(
-            id = "Asd",
-            name = "영어",
-            room = "e동 423호",
-            startTime = "19:30"
-        ),
-        TimeScheduleEntity(
-            id = "asd",
-            name = "영어",
-            room = "e동 423호",
-            startTime = "23:59"
-        ),
-    ))
+
+
+
 
     fun getData() {
-        _notifyTimeInfo.value = calNextTime(temp)
+
         _timeScheduleInfo.value = listOf(
-            TimeScheduleDto(location = "산융 205호", major = "수학2", time = "11:30~12:20"),
-            TimeScheduleDto(location = "산융 206호", major = "수학2", time = "11:30~12:20"),
+            TimeSchedule(
+                name = "수학",
+                room = "e동 423호",
+                startTime = TimeUtil.tomillisecond("15:30"),
+                endTime = TimeUtil.tomillisecond("16:30")
+            ),
+            TimeSchedule(
+                name = "영어",
+                room = "e동 423호",
+                startTime = TimeUtil.tomillisecond("19:30"),
+                endTime = TimeUtil.tomillisecond("23:40")
+            ),
         )
+
+        _notifyTimeInfo.value = calNextTime(_timeScheduleInfo.value)
+
 
         _todoInfo.value = listOf(
             TodoDto(
@@ -85,7 +82,7 @@ class HomeViewModel @Inject constructor(): ViewModel() {
     }
 
 
-    private fun calNextTime(todoInfo :  List<TimeScheduleEntity>) : NotifyTime{
+    private fun calNextTime(todoInfo :  List<TimeSchedule>) : NotifyTime{
 
         if(todoInfo.isEmpty()) return NotifyTime(false, "금일은 수업이 존재하지 않습니다.", null, null, null)
 
@@ -94,7 +91,7 @@ class HomeViewModel @Inject constructor(): ViewModel() {
 
         for (data in todoInfo){
 
-            var diff = TimeUtil.tomillisecond(data.startTime) - curTime
+            var diff = data.startTime - curTime
 
             if(diff < 0) {
                 preName = data.name
@@ -103,9 +100,9 @@ class HomeViewModel @Inject constructor(): ViewModel() {
             val leftTime = TimeUtil.toStringKorean(diff)
 
             return if(data.name.equals(preName)){
-                NotifyTime(true, "수업 종료까지", leftTime, TimeUtil.toStringAMS(TimeUtil.tomillisecond(data.startTime)), data.name)
+                NotifyTime(true, "수업 종료까지", leftTime, TimeUtil.toStringAMS(data.startTime), data.name)
             } else{
-                NotifyTime(true, "다음 수업까지", leftTime, data.startTime, data.name)
+                NotifyTime(true, "다음 수업까지", leftTime, TimeUtil.toStringAMS(data.startTime), data.name)
             }
         }
 

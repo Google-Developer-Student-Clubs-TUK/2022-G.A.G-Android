@@ -9,5 +9,6 @@ import utils.TimeUtil
         name = name,
         room = room,
         startTime = TimeUtil.tomillisecond(startTime),
+        endTime = TimeUtil.tomillisecond(endTime)
     )
 

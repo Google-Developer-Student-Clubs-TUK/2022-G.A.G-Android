@@ -9,25 +9,21 @@ class TimeScheduleDataSourceImpl : TimeScheduleDataSource {
         //임시용
         return TimeScheduleResponse(
             code = 0,
-            message = "success",
+            msg = "success",
             result = listOf(
                 TimeScheduleEntity(
                     id = "ASKDKSA@2032",
                     name = "영어",
                     room = "e동 423호",
-                    startTime = "15:30"
+                    startTime = "15:30",
+                    endTime = "16:40"
                 ),
                 TimeScheduleEntity(
                     id = "ASKDKSA@2032",
                     name = "수학",
                     room = "e동 423호",
-                    startTime = "19:30"
-                ),
-                TimeScheduleEntity(
-                    id = "ASKDKSA@2032",
-                    name = "수학",
-                    room = "e동 423호",
-                    startTime = "20:30"
+                    startTime = "19:30",
+                    endTime ="22:30"
                 ),
             )
         )

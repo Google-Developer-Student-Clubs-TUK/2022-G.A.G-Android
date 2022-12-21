@@ -8,7 +8,7 @@ class TodoDataSourceImpl : TodoDataSource {
         //임시용
         return TodoResponse(
             code = 0,
-            message = "success",
+            msg = "success",
             result = listOf(
                 TodoEntity(
                     subjectId = "ASKDKSA@2032",

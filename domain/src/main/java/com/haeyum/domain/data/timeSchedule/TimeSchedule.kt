@@ -8,4 +8,5 @@ data class TimeSchedule(
     val name: String,
     val room: String,
     val startTime: Long,
+    val endTime: Long,
 )
