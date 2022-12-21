@@ -6,6 +6,6 @@ package com.haeyum.data.model
 
 interface BaseResponseModel<T> {
     val code: Int
-    val message: String
+    val msg: String
     val result: T?
 }

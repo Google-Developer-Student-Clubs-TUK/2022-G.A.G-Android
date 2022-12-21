@@ -13,7 +13,7 @@ class ProfileDataSourceImpl : ProfileDataSource {
         // TODO 서버 API 나오면 변경
         return ProfileResponse(
             code = 0,
-            message = "success",
+            msg = "success",
             result = ProfileEntity(
                 code = 0,
                 name = "유광무",

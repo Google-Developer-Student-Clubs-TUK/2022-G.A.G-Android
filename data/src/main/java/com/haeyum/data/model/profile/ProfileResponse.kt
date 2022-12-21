@@ -8,6 +8,6 @@ import com.haeyum.data.model.BaseResponseModel
 
 data class ProfileResponse(
     override val code: Int,
-    override val message: String,
+    override val msg: String,
     override val result: ProfileEntity?
 ) : BaseResponseModel<ProfileEntity>
