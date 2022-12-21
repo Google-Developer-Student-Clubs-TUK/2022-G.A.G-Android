@@ -91,18 +91,17 @@ class HomeViewModel @Inject constructor(): ViewModel() {
 
         for (data in todoInfo){
 
-            var diff = data.startTime - curTime
-
+            var diff = data.endTime - curTime
+//10시  1시수업. -> 현재 시각 11시 ->끝 시간으로 정렬? 11시에 끝나. 그럼 일단 수업대기중인데 시작시간전인지 확인
             if(diff < 0) {
-                preName = data.name
                 continue
             }
-            val leftTime = TimeUtil.toStringKorean(diff)
 
-            return if(data.name.equals(preName)){
-                NotifyTime(true, "수업 종료까지", leftTime, TimeUtil.toStringAMS(data.startTime), data.name)
+
+            return if(curTime > data.startTime){ //현재 시각 11시 수업끝나는시간 12시 , 수업시작 시간 10시  , 수업시간 11시 30분이면
+                NotifyTime(true, "수업 종료까지",  TimeUtil.toStringKorean(curTime-data.startTime), TimeUtil.toStringAMS(data.startTime), data.name)
             } else{
-                NotifyTime(true, "다음 수업까지", leftTime, TimeUtil.toStringAMS(data.startTime), data.name)
+                NotifyTime(true, "다음 수업까지", TimeUtil.toStringKorean(data.startTime-curTime), TimeUtil.toStringAMS(data.startTime), data.name)
             }
         }
 

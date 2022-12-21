@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,12 +21,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.haeyum.domain.data.notifyTime.NotifyTime
+import com.haeyum.domain.data.timeSchedule.TimeSchedule
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
 import com.haeyum.schoolmate.ui.theme.LightBlue
 import com.haeyum.schoolmate.ui.theme.Orange
 import com.haeyum.schoolmate.ui.theme.TextColor
+import utils.TimeUtil
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
@@ -62,7 +63,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun ConstraintLayoutScope.ContentFrame(
     contentRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
-    timeScheduleInfo: List<TimeScheduleDto>,
+    timeScheduleInfo: List<TimeSchedule>,
     todoInfo: List<TodoDto>
 ) {
     Column(
@@ -122,7 +123,7 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
 
 @Composable
 private fun Contents(
-    timeScheduleInfo: List<TimeScheduleDto>,
+    timeScheduleInfo: List<TimeSchedule>,
     todoInfo: List<TodoDto>
 ): @Composable() (ColumnScope.() -> Unit) =
     {
@@ -155,7 +156,7 @@ private fun Todo(todoInfoList: List<TodoDto>) {
 }
 
 @Composable
-private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
+private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>) {
     Text(
         text = "오늘 시간표",
         fontSize = 20.sp,
@@ -229,7 +230,7 @@ private fun UserInfo() {
 
 
 @Composable
-private fun TimeScheduleList(data: TimeScheduleDto) {
+private fun TimeScheduleList(data: TimeSchedule) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -240,20 +241,20 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = data.location,
+                text = data.room,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Normal,
                 color = TextColor
             )
             Text(
-                text = data.major,
+                text = data.name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextColor
             )
         }
         Text(
-            text = data.time,
+            text = TimeUtil.toStringMS(data.startTime)+"-"+TimeUtil.toStringMS(data.endTime),
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
