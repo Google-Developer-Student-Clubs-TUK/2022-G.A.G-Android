@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.haeyum.domain.data.notifyTime.NotifyTime
 import com.haeyum.domain.data.timeSchedule.TimeSchedule
+import com.haeyum.domain.data.todo.Todo
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
@@ -64,7 +65,7 @@ private fun ConstraintLayoutScope.ContentFrame(
     contentRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
     timeScheduleInfo: List<TimeSchedule>,
-    todoInfo: List<TodoDto>
+    todoInfo: List<Todo>
 ) {
     Column(
         modifier = Modifier
@@ -124,7 +125,7 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
 @Composable
 private fun Contents(
     timeScheduleInfo: List<TimeSchedule>,
-    todoInfo: List<TodoDto>
+    todoInfo: List<Todo>
 ): @Composable() (ColumnScope.() -> Unit) =
     {
         Column(
@@ -138,7 +139,7 @@ private fun Contents(
     }
 
 @Composable
-private fun Todo(todoInfoList: List<TodoDto>) {
+private fun Todo(todoInfoList: List<Todo>) {
     Text(
         text = "오늘 할일",
         fontSize = 20.sp,
@@ -264,9 +265,9 @@ private fun TimeScheduleList(data: TimeSchedule) {
 
 
 @Composable
-fun TodoList(index: Int, data: TodoDto) {
+fun TodoList(index: Int, data: Todo) {
 
-    val color = remember(data.is_submit) { (if (data.is_submit) Orange else LightBlue) }
+    val color = remember(data.isDone) { (if (data.isDone) Orange else LightBlue) }
 
     Row(
         modifier = Modifier
@@ -302,26 +303,26 @@ fun TodoList(index: Int, data: TodoDto) {
             }
             Column() {
                 Text(
-                    text = data.name,
+                    text = data.name + "과제",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextColor,
                 )
                 Text(
-                    text = data.major + "과제",
+                    text = data.subjectId,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     color = TextColor,
                 )
             }
         }
-        if (data.is_submit) {
+        if (data.isDone) {
             Canvas(modifier = Modifier.size(20.dp), onDraw = {
                 drawCircle(color = color)
             })
         } else {
             Text(
-                text = data.time,
+                text = TimeUtil.toStringAMSLong(data.deadline),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = TextColor,

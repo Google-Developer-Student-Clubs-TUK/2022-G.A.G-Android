@@ -9,4 +9,5 @@ import utils.TimeUtil
         name = name,
         deadline = TimeUtil.tomillisecondLong(deadline),
         isDone = isDone,
+        subjectId  = subjectId,
     )
