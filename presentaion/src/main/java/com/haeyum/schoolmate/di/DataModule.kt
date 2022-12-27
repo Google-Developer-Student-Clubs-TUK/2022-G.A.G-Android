@@ -12,12 +12,16 @@ import com.haeyum.data.repository.device.DeviceRepositoryImpl
 import com.haeyum.data.repository.profile.ProfileDataSource
 import com.haeyum.data.repository.profile.ProfileDataSourceImpl
 import com.haeyum.data.repository.profile.ProfileRepositoryImpl
+import com.haeyum.data.repository.timeSchedule.TimeScheduleDataSource
+import com.haeyum.data.repository.timeSchedule.TimeScheduleDataSourceImpl
+import com.haeyum.data.repository.timeSchedule.TimeScheduleRepositoryImpl
+import com.haeyum.data.repository.todo.TodoDataSource
+import com.haeyum.data.repository.todo.TodoDataSourceImpl
+import com.haeyum.data.repository.todo.TodoRepositoryImpl
 import com.haeyum.data.repository.user.UserDataSource
 import com.haeyum.data.repository.user.UserDataSourceImpl
 import com.haeyum.data.repository.user.UserRepositoryImpl
-import com.haeyum.domain.repository.DeviceRepository
-import com.haeyum.domain.repository.ProfileRepository
-import com.haeyum.domain.repository.UserRepository
+import com.haeyum.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,6 +49,28 @@ object DataModule {
     @Provides
     fun provideProfileRepository(profileDataSource: ProfileDataSource): ProfileRepository =
         ProfileRepositoryImpl(profileDataSource)
+
+
+
+    @Singleton
+    @Provides
+    fun provideTodoDataSource(client: HttpClient): TodoDataSource = TodoDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideTodoRepository(todoDataSource: TodoDataSource) : TodoRepository =
+        TodoRepositoryImpl(todoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideTimeScheduleDataSource(client: HttpClient): TimeScheduleDataSource = TimeScheduleDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideTimeScheduleRepository(timeScheduleDataSource: TimeScheduleDataSource) : TimeScheduleRepository =
+        TimeScheduleRepositoryImpl(timeScheduleDataSource)
+
+
 
     @Singleton
     @Provides
