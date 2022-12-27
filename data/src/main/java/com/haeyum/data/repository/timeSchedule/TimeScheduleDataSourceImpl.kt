@@ -1,31 +1,16 @@
 package com.haeyum.data.repository.timeSchedule
-
-import com.haeyum.data.model.timeSchedule.TimeScheduleEntity
+import com.haeyum.data.model.timeSchedule.TimeScheduleRequest
 import com.haeyum.data.model.timeSchedule.TimeScheduleResponse
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import javax.inject.Inject
 
 
-class TimeScheduleDataSourceImpl : TimeScheduleDataSource {
-    override suspend fun getTimeSchedule(): TimeScheduleResponse {
-        //임시용
-        return TimeScheduleResponse(
-            code = 0,
-            msg = "success",
-            result = listOf(
-                TimeScheduleEntity(
-                    id = "ASKDKSA@2032",
-                    name = "영어",
-                    room = "e동 423호",
-                    startTime = "15:30",
-                    endTime = "16:40"
-                ),
-                TimeScheduleEntity(
-                    id = "ASKDKSA@2032",
-                    name = "수학",
-                    room = "e동 423호",
-                    startTime = "19:30",
-                    endTime ="22:30"
-                ),
-            )
-        )
-    }
+class TimeScheduleDataSourceImpl @Inject constructor(private val client: HttpClient) :
+    TimeScheduleDataSource {
+    override suspend fun getTimeSchedule(id: String, key: String): TimeScheduleResponse = client.post("http://13.52.122.41:8080/v1/users/subjects/today") {
+        setBody(TimeScheduleRequest(id,key))
+    }.body()
 }
+

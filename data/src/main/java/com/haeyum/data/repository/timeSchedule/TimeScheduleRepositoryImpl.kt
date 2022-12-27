@@ -5,10 +5,10 @@ import com.haeyum.domain.data.timeSchedule.TimeSchedule
 import com.haeyum.domain.repository.TimeScheduleRepository
 import javax.inject.Inject
 
-class TimeScheduleRepositoryImpl @Inject constructor(private val timeSheduleDataSource: TimeScheduleDataSource) :
+class TimeScheduleRepositoryImpl @Inject constructor(private val timeScheduleDataSource: TimeScheduleDataSource) :
     TimeScheduleRepository {
-    override suspend fun getTimeSchedule(): List<TimeSchedule>? =
-        timeSheduleDataSource.getTimeSchedule().result?.map {
+    override suspend fun getTimeSchedule(id: String, key:String): List<TimeSchedule>? =
+        timeScheduleDataSource.getTimeSchedule(id, key).result?.map {
             it.mapToDomain()
         }
 }

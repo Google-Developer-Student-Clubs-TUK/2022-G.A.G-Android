@@ -1,34 +1,15 @@
 package com.haeyum.data.repository.todo
 
-import com.haeyum.data.model.todo.TodoEntity
+import com.haeyum.data.model.todo.TodoRequest
 import com.haeyum.data.model.todo.TodoResponse
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import javax.inject.Inject
 
-class TodoDataSourceImpl : TodoDataSource {
-    override suspend fun getTodo(): TodoResponse {
-        //임시용
-        return TodoResponse(
-            code = 0,
-            msg = "success",
-            result = listOf(
-                TodoEntity(
-                    subjectId = "ASKDKSA@2032",
-                    name = "영어",
-                    deadline = "2022-12-02T15:30:00",
-                    isDone = false
-                ),
-                TodoEntity(
-                    subjectId = "ASKDKSA@2032",
-                    name = "영어",
-                    deadline = "2022-12-02T15:30:00",
-                    isDone = false
-                ),
-                TodoEntity(
-                    subjectId = "ASKDKSA@2032",
-                    name = "영어",
-                    deadline = "2022-12-02T15:30:00",
-                    isDone = false
-                )
-            )
-        )
-    }
+class TodoDataSourceImpl  @Inject constructor(private val client: HttpClient) : TodoDataSource {
+    override suspend fun getTodo(id: String, key: String): TodoResponse =
+        client.post("http://13.52.122.41:8080/v1/users/todos") {
+            setBody(TodoRequest(id, key))
+        }.body()
 }

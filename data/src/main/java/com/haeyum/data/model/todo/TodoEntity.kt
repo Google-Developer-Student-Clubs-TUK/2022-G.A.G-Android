@@ -1,6 +1,7 @@
 package com.haeyum.data.model.todo
-import java.time.LocalDate
 
+
+@kotlinx.serialization.Serializable
 data class TodoEntity (
     val subjectId: String,
     val name: String,
