@@ -10,9 +10,9 @@ package com.haeyum.data.model.user.login
 
 @kotlinx.serialization.Serializable
 data class LoginEntity(
-    val studentId: String,
+    val id: String,
     val major: String,
     val name: String,
     val email: String,
-    val ImageURL: String,
+    val imageUrl: String,
 )

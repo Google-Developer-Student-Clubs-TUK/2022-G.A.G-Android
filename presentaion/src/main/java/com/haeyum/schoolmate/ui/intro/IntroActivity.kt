@@ -4,20 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.activity.viewModels
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.haeyum.schoolmate.ui.intro.login.LoginScreen
+import com.haeyum.schoolmate.ui.intro.onboarding.OnboardingScreen
+import com.haeyum.schoolmate.ui.intro.splash.SplashScreen
 import com.haeyum.schoolmate.ui.main.MainActivity
 import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class IntroActivity : ComponentActivity() {
+    val viewModel by viewModels<IntroViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -30,16 +31,25 @@ class IntroActivity : ComponentActivity() {
                 }
 
                 when (navigate) {
-                    0 -> OnboardingScreen {
-                        navigate = 1
+                    0 -> SplashScreen(
+                        onRequireLogin = {
+                            navigate = 1
+                        },
+                        onAlreadyLogin = {
+                            finishAndStartMain()
+                        },
+                        onFinishEvent = {
+                            finish()
+                        }
+                    )
+                    1 -> OnboardingScreen {
+                        navigate = 2
                     }
-                    1 -> LoginScreen {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                    2 -> LoginScreen {
+                        finishAndStartMain()
                     }
                     else -> {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                        finishAndStartMain()
                     }
                 }
 
@@ -48,21 +58,10 @@ class IntroActivity : ComponentActivity() {
                 }
             }
         }
-
-//        startActivity(Intent(this, MainActivity::class.java))
-//        finish()
     }
-}
 
-@Composable
-fun Greeting2(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview2() {
-    SchoolmateTheme {
-        Greeting2("Android")
+    private fun finishAndStartMain() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

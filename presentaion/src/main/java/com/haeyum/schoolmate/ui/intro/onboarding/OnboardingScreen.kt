@@ -1,12 +1,15 @@
 /*
+ * Created by PangMoo on 2022/12/27
+ */
+
+/*
  * Created by PangMoo on 2022/12/8
  */
 
 @file:OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 
-package com.haeyum.schoolmate.ui.intro
+package com.haeyum.schoolmate.ui.intro.onboarding
 
-import android.util.Log
 import androidx.annotation.RawRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
@@ -87,7 +90,6 @@ fun OnboardingScreen(onNavigateToLogin: () -> Unit) {
                     .padding(top = 40.dp),
                 contentAlignment = Center
             ) {
-                Log.d("PangMoo", "pagerState.currentPageOffset: ${pagerState.currentPageOffset}")
                 val indicatorOffsetX by animateDpAsState(targetValue = (-30).dp + pagerState.currentPage.dp * 30)
 
                 Row {

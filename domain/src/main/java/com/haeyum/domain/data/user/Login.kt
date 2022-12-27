@@ -5,9 +5,9 @@
 package com.haeyum.domain.data.user
 
 data class Login(
-    val studentId: String,
+    val id: String,
     val major: String,
     val name: String,
     val email: String,
-    val ImageURL: String,
+    val imageUrl: String,
 )
