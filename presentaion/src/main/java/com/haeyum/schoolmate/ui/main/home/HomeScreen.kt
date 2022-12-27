@@ -9,6 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.haeyum.domain.data.notifyTime.NotifyTime
+import com.haeyum.domain.data.profile.Profile
 import com.haeyum.domain.data.timeSchedule.TimeSchedule
 import com.haeyum.domain.data.todo.Todo
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
@@ -39,13 +41,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 //        statusBarColor(systemUiController, Color.Transparent)
 //    }
 
-    SideEffect {
-        viewModel.getData()
-    }
-
-    val timeScheduleInfo = viewModel.timeScheduleInfo.value
-    val todoInfo = viewModel.todoInfo.value
+    val timeScheduleInfo = viewModel.timeScheduleInfo.collectAsState().value
+    val todoInfo = viewModel.todoInfo.collectAsState().value
     val notifyTimeInfo = viewModel.notifyTimeInfo.value
+    val profileInfo = viewModel.profile.collectAsState().value
 
     ConstraintLayout(
         modifier = Modifier
@@ -53,7 +52,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             .verticalScroll(rememberScrollState())
     ) {
         val (profileRef, contentRef, nextTimetableRef) = createRefs()
-        ProfileFrame(profileRef)
+        ProfileFrame(profileRef, profileInfo)
         NextTimeTableFrame(nextTimetableRef, contentRef, profileRef, notifyTimeInfo)
         ContentFrame(contentRef, profileRef, timeScheduleInfo, todoInfo)
     }
@@ -64,8 +63,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun ConstraintLayoutScope.ContentFrame(
     contentRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
-    timeScheduleInfo: List<TimeSchedule>,
-    todoInfo: List<Todo>
+    timeScheduleInfo: List<TimeSchedule>?,
+    todoInfo: List<Todo>?
 ) {
     Column(
         modifier = Modifier
@@ -107,7 +106,7 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
 }
 
 @Composable
-private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference) {
+private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference, profileInfo: Profile?) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.secondary)
@@ -116,7 +115,7 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
             .padding(horizontal = 30.dp)
             .constrainAs(profileRef) {}
     ) {
-        UserInfo()
+        UserInfo(profileInfo)
     }
 
 }
@@ -124,8 +123,8 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
 
 @Composable
 private fun Contents(
-    timeScheduleInfo: List<TimeSchedule>,
-    todoInfo: List<Todo>
+    timeScheduleInfo: List<TimeSchedule>?,
+    todoInfo: List<Todo>?
 ): @Composable() (ColumnScope.() -> Unit) =
     {
         Column(
@@ -139,7 +138,7 @@ private fun Contents(
     }
 
 @Composable
-private fun Todo(todoInfoList: List<Todo>) {
+private fun Todo(todoInfoList: List<Todo>?) {
     Text(
         text = "오늘 할일",
         fontSize = 20.sp,
@@ -150,14 +149,14 @@ private fun Todo(todoInfoList: List<Todo>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        todoInfoList.forEachIndexed() { index, data ->
+        todoInfoList?.forEachIndexed() { index, data ->
             TodoList(index, data)
         }
     }
 }
 
 @Composable
-private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>) {
+private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>?) {
     Text(
         text = "오늘 시간표",
         fontSize = 20.sp,
@@ -174,7 +173,7 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        timeScheduleInfo.forEach { data ->
+        timeScheduleInfo?.forEach { data ->
             TimeScheduleList(data)
         }
     }
@@ -214,15 +213,15 @@ private fun NextTimetable(notifyTimeInfo: NotifyTime) {
 }
 
 @Composable
-private fun UserInfo() {
+private fun UserInfo(profileInfo: Profile?) {
     Text(
-        text = "19 유광무",
+        text = (profileInfo?.id?.substring(0,2) ?: "-") + (profileInfo?.name ?: "-"),
         fontSize = 25.sp,
         fontWeight = FontWeight.Bold,
         color = TextColor,
     )
     Text(
-        text = "컴퓨터공학부 소프트웨어전공",
+        text = profileInfo?.major ?: "-",
         fontSize = 15.sp,
         fontWeight = FontWeight.Normal,
         color = TextColor
