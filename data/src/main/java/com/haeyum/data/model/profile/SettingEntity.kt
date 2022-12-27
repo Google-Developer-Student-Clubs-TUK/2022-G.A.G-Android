@@ -4,6 +4,7 @@
 
 package com.haeyum.data.model.profile
 
+@kotlinx.serialization.Serializable
 data class SettingEntity(
     var enabledProfile: Boolean,
     var enabledNotification: Boolean

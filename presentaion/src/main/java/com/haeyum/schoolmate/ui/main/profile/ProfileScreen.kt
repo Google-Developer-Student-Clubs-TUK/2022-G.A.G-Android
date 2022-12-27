@@ -23,7 +23,6 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.haeyum.domain.data.profile.Profile
-import com.haeyum.domain.data.profile.Setting
 import com.haeyum.schoolmate.ui.component.HeaderComponent
 import com.haeyum.schoolmate.ui.component.ToggleComponent
 import com.haeyum.schoolmate.ui.theme.SchoolmateTheme
@@ -53,7 +52,7 @@ private fun PureProfileScreen(profile: Profile?) {
         HeaderComponent.LargeHeader(title = "프로필", description = "나의 멋진 설명을 담아보았어요")
         Profile(profile = profile)
         Spacer(modifier = Modifier.height(20.dp))
-        Section(text = "설정") {
+        Section(text = "설정", isLoading = profile == null) {
             ToggleItem(
                 key = "프로필 사진 노출",
                 value = enabledProfile,
@@ -107,7 +106,7 @@ private fun Profile(profile: Profile?) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = profile?.studentId ?: "-",
+                text = profile?.id ?: "-",
                 modifier = Modifier
                     .fillMaxWidth(),
                 color = TextColor,
@@ -127,7 +126,7 @@ private fun Profile(profile: Profile?) {
 }
 
 @Composable
-private fun Section(text: String, content: @Composable ColumnScope.() -> Unit) {
+private fun Section(text: String, isLoading: Boolean, content: @Composable ColumnScope.() -> Unit) {
     Divider(
         modifier = Modifier.padding(top = 10.dp),
         color = MaterialTheme.colors.surface,
@@ -141,7 +140,12 @@ private fun Section(text: String, content: @Composable ColumnScope.() -> Unit) {
         fontWeight = FontWeight.SemiBold
     )
     Column(
-        modifier = Modifier.padding(top = 15.dp),
+        modifier = Modifier
+            .padding(top = 15.dp)
+            .placeholder(
+                visible = isLoading,
+                highlight = PlaceholderHighlight.shimmer()
+            ),
         verticalArrangement = Arrangement.spacedBy(18.dp),
         content = content
     )
@@ -174,14 +178,13 @@ private fun ProfileScreenCompleteDarkPreview() {
         ) {
             PureProfileScreen(
                 profile = Profile(
-                    code = 0,
                     name = "유광무",
-                    studentId = "2019156023",
+                    email = "vnycall74@naver.com",
+                    imageUrl = "https://haeyum.dev/pangmoo/profile.jpeg",
+                    id = "2019156023",
                     major = "컴퓨터공학부 소프트웨어 전공",
-                    setting = Setting(
-                        enabledProfile = true,
-                        enabledNotification = true
-                    )
+                    isAlarmOn = true,
+                    isProfileVisible = true,
                 )
             )
         }
@@ -213,14 +216,13 @@ private fun ProfileScreenCompleteLightPreview() {
         ) {
             PureProfileScreen(
                 profile = Profile(
-                    code = 0,
                     name = "유광무",
-                    studentId = "2019156023",
+                    id = "2019156023",
+                    email = "vnycall74@naver.com",
+                    imageUrl = "https://haeyum.dev/pangmoo/profile.jpeg",
                     major = "컴퓨터공학부 소프트웨어 전공",
-                    setting = Setting(
-                        enabledProfile = true,
-                        enabledNotification = true
-                    )
+                    isAlarmOn = true,
+                    isProfileVisible = true,
                 )
             )
         }

@@ -11,6 +11,6 @@ import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(private val profileDataSource: ProfileDataSource) :
     ProfileRepository {
-    override suspend fun getProfile(): Profile? =
-        profileDataSource.getProfile().result?.mapToDomain()
+    override suspend fun getProfile(id: String, key: String): Profile? =
+        profileDataSource.getProfile(id, key).result?.mapToDomain()
 }

@@ -4,26 +4,15 @@
 
 package com.haeyum.data.repository.profile
 
-import com.haeyum.data.model.profile.ProfileEntity
+import com.haeyum.data.model.profile.ProfileRequest
 import com.haeyum.data.model.profile.ProfileResponse
-import com.haeyum.data.model.profile.SettingEntity
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import javax.inject.Inject
 
-class ProfileDataSourceImpl : ProfileDataSource {
-    override suspend fun getProfile(): ProfileResponse {
-        // TODO 서버 API 나오면 변경
-        return ProfileResponse(
-            code = 0,
-            msg = "success",
-            result = ProfileEntity(
-                code = 0,
-                name = "유광무",
-                studentId = "2019156023",
-                major = "컴퓨터공학부 소프트웨어전공",
-                setting = SettingEntity(
-                    enabledProfile = true,
-                    enabledNotification = false
-                )
-            )
-        )
-    }
+class ProfileDataSourceImpl @Inject constructor(private val client: HttpClient) : ProfileDataSource {
+    override suspend fun getProfile(id: String, key: String): ProfileResponse = client.post("http://13.52.122.41:8080/v1/users/profile") {
+        setBody(ProfileRequest(id, key))
+    }.body()
 }

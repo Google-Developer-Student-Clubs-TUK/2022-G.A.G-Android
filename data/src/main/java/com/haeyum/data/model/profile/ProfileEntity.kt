@@ -4,10 +4,16 @@
 
 package com.haeyum.data.model.profile
 
+import kotlinx.serialization.SerialName
+
+@kotlinx.serialization.Serializable
 data class ProfileEntity(
-    val code: Int,
+    val id: String,
     val name: String,
-    val studentId: String,
+    val email: String,
     val major: String,
-    val setting: SettingEntity
+    @SerialName("image_url")
+    val imageUrl: String,
+    val isAlarmOn: Boolean,
+    val isProfileVisible: Boolean,
 )

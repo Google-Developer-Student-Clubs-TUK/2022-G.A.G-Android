@@ -7,5 +7,5 @@ package com.haeyum.domain.repository
 import com.haeyum.domain.data.profile.Profile
 
 interface ProfileRepository {
-    suspend fun getProfile(): Profile?
+    suspend fun getProfile(id: String, key: String): Profile?
 }

@@ -10,11 +10,13 @@ import com.haeyum.domain.data.profile.Profile
 import com.haeyum.domain.data.profile.Setting
 
 fun ProfileEntity.mapToDomain() = Profile(
-    code = code,
+    id = id,
     name = name,
-    studentId = studentId,
+    email = email,
     major = major,
-    setting = setting.mapToDomain()
+    imageUrl = imageUrl,
+    isAlarmOn = isAlarmOn,
+    isProfileVisible = isProfileVisible,
 )
 
 fun SettingEntity.mapToDomain() = Setting(

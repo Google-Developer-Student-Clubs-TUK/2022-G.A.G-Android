@@ -5,9 +5,11 @@
 package com.haeyum.domain.data.profile
 
 data class Profile(
-    val code: Int,
+    val id: String,
     val name: String,
-    val studentId: String,
+    val email: String,
     val major: String,
-    val setting: Setting
+    val imageUrl: String,
+    val isAlarmOn: Boolean,
+    val isProfileVisible: Boolean,
 )

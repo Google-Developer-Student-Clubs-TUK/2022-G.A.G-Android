@@ -6,6 +6,7 @@ package com.haeyum.data.model.profile
 
 import com.haeyum.data.model.BaseResponseModel
 
+@kotlinx.serialization.Serializable
 data class ProfileResponse(
     override val code: Int,
     override val msg: String,
