@@ -6,5 +6,6 @@ data class TimeScheduleEntity(
     val name: String,
     val room: String,
     val startTime: String,
-    val endTime : String,
-    )
+    val endTime: String,
+    val isPinned: Boolean,
+)

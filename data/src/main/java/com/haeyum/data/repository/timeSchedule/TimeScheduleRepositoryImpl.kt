@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class TimeScheduleRepositoryImpl @Inject constructor(private val timeScheduleDataSource: TimeScheduleDataSource) :
     TimeScheduleRepository {
-    override suspend fun getTimeSchedule(id: String, key:String): List<TimeSchedule>? =
+    override suspend fun getTimeSchedule(id: String, key: String): List<TimeSchedule>? =
         timeScheduleDataSource.getTimeSchedule(id, key).result?.map {
             it.mapToDomain()
         }
