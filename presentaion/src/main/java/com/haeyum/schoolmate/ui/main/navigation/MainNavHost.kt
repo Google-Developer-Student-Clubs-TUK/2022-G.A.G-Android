@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.haeyum.schoolmate.ui.main.home.HomeScreen
 import com.haeyum.schoolmate.ui.main.navigation.nav_graph.boardNavGraph
 import com.haeyum.schoolmate.ui.main.profile.ProfileScreen
 
@@ -19,7 +20,7 @@ fun SetupMainNavGraph(navHostController: NavHostController) {
         route = MainNavRoute.MAIN_ROUTE
     ) {
         composable(MainNavRoute.Home.route) {
-
+            HomeScreen()
         }
         composable(MainNavRoute.Profile.route) {
             ProfileScreen()

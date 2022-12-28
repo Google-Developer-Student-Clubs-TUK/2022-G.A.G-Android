@@ -8,12 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,12 +21,17 @@ import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.haeyum.domain.data.notifyTime.NotifyTime
+import com.haeyum.domain.data.profile.Profile
+import com.haeyum.domain.data.timeSchedule.TimeSchedule
+import com.haeyum.domain.data.todo.Todo
 import com.haeyum.schoolmate.data.Home.TimeScheduleDto
 import com.haeyum.schoolmate.data.Home.TodoDto
 import com.haeyum.schoolmate.supports.drawBorder
 import com.haeyum.schoolmate.ui.theme.LightBlue
 import com.haeyum.schoolmate.ui.theme.Orange
 import com.haeyum.schoolmate.ui.theme.TextColor
+import utils.TimeUtil
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
@@ -37,12 +41,10 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 //        statusBarColor(systemUiController, Color.Transparent)
 //    }
 
-    SideEffect {
-        viewModel.getData()
-    }
-
-    val timeScheduleInfo = viewModel.timeScheduleInfo.value
-    val todoInfo = viewModel.todoInfo.value
+    val timeScheduleInfo = viewModel.timeScheduleInfo.collectAsState().value
+    val todoInfo = viewModel.todoInfo.collectAsState().value
+    val notifyTimeInfo = viewModel.notifyTimeInfo.value
+    val profileInfo = viewModel.profile.collectAsState().value
 
     ConstraintLayout(
         modifier = Modifier
@@ -50,8 +52,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             .verticalScroll(rememberScrollState())
     ) {
         val (profileRef, contentRef, nextTimetableRef) = createRefs()
-        ProfileFrame(profileRef)
-        NextTimeTableFrame(nextTimetableRef, contentRef, profileRef)
+        ProfileFrame(profileRef, profileInfo)
+        NextTimeTableFrame(nextTimetableRef, contentRef, profileRef, notifyTimeInfo)
         ContentFrame(contentRef, profileRef, timeScheduleInfo, todoInfo)
     }
 
@@ -61,8 +63,8 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 private fun ConstraintLayoutScope.ContentFrame(
     contentRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
-    timeScheduleInfo: List<TimeScheduleDto>,
-    todoInfo: List<TodoDto>
+    timeScheduleInfo: List<TimeSchedule>?,
+    todoInfo: List<Todo>?
 ) {
     Column(
         modifier = Modifier
@@ -81,7 +83,8 @@ private fun ConstraintLayoutScope.ContentFrame(
 private fun ConstraintLayoutScope.NextTimeTableFrame(
     nextTimetableRef: ConstrainedLayoutReference,
     scheduleRef: ConstrainedLayoutReference,
-    profileRef: ConstrainedLayoutReference
+    profileRef: ConstrainedLayoutReference,
+    notifyTimeInfo: NotifyTime?
 ) {
     Column(modifier = Modifier
         .zIndex(1f)
@@ -97,13 +100,16 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
         .drawBorder()
         .padding(20.dp),
         verticalArrangement = Arrangement.Center) {
-        NextTimetable()
+        NextTimetable(notifyTimeInfo)
     }
 
 }
 
 @Composable
-private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference) {
+private fun ConstraintLayoutScope.ProfileFrame(
+    profileRef: ConstrainedLayoutReference,
+    profileInfo: Profile?
+) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.secondary)
@@ -112,7 +118,7 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
             .padding(horizontal = 30.dp)
             .constrainAs(profileRef) {}
     ) {
-        UserInfo()
+        UserInfo(profileInfo)
     }
 
 }
@@ -120,8 +126,8 @@ private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutRefe
 
 @Composable
 private fun Contents(
-    timeScheduleInfo: List<TimeScheduleDto>,
-    todoInfo: List<TodoDto>
+    timeScheduleInfo: List<TimeSchedule>?,
+    todoInfo: List<Todo>?
 ): @Composable() (ColumnScope.() -> Unit) =
     {
         Column(
@@ -135,7 +141,7 @@ private fun Contents(
     }
 
 @Composable
-private fun Todo(todoInfoList: List<TodoDto>) {
+private fun Todo(todoInfoList: List<Todo>?) {
     Text(
         text = "오늘 할일",
         fontSize = 20.sp,
@@ -146,14 +152,14 @@ private fun Todo(todoInfoList: List<TodoDto>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        todoInfoList.forEachIndexed() { index, data ->
+        todoInfoList?.forEachIndexed() { index, data ->
             TodoList(index, data)
         }
     }
 }
 
 @Composable
-private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
+private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>?) {
     Text(
         text = "오늘 시간표",
         fontSize = 20.sp,
@@ -170,7 +176,9 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        timeScheduleInfo.forEach { data ->
+
+
+        timeScheduleInfo?.forEach { data ->
             TimeScheduleList(data)
         }
     }
@@ -178,42 +186,47 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeScheduleDto>) {
 }
 
 @Composable
-private fun NextTimetable() {
+private fun NextTimetable(notifyTimeInfo: NotifyTime?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "다음 수업까지",
+            text = notifyTimeInfo?.message ?: "-",
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
         )
+        notifyTimeInfo?.time?.let {
+            Text(
+                text = it,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colors.primary
+            )
+        }
+    }
+
+    if (notifyTimeInfo!=null && notifyTimeInfo.isLeft) {
         Text(
-            text = "오후 3시 20분",
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colors.primary
+            text = notifyTimeInfo.major + " " + notifyTimeInfo.leftTime,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = TextColor,
         )
     }
-    Text(
-        text = "프로그래밍 10분",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        color = TextColor,
-    )
 }
 
 @Composable
-private fun UserInfo() {
+private fun UserInfo(profileInfo: Profile?) {
     Text(
-        text = "19 유광무",
+        text = (profileInfo?.id?.substring(0, 2) ?: "-") + (profileInfo?.name ?: "-"),
         fontSize = 25.sp,
         fontWeight = FontWeight.Bold,
         color = TextColor,
     )
     Text(
-        text = "컴퓨터공학부 소프트웨어전공",
+        text = profileInfo?.major ?: "-",
         fontSize = 15.sp,
         fontWeight = FontWeight.Normal,
         color = TextColor
@@ -222,7 +235,7 @@ private fun UserInfo() {
 
 
 @Composable
-private fun TimeScheduleList(data: TimeScheduleDto) {
+private fun TimeScheduleList(data: TimeSchedule) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -233,20 +246,20 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = data.location,
+                text = data.room,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Normal,
                 color = TextColor
             )
             Text(
-                text = data.major,
+                text = data.name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextColor
             )
         }
         Text(
-            text = data.time,
+            text = TimeUtil.toStringMS(data.startTime) + "-" + TimeUtil.toStringMS(data.endTime),
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
@@ -256,9 +269,9 @@ private fun TimeScheduleList(data: TimeScheduleDto) {
 
 
 @Composable
-fun TodoList(index: Int, data: TodoDto) {
+fun TodoList(index: Int, data: Todo) {
 
-    val color = remember(data.is_submit){ (if (data.is_submit) Orange else LightBlue) }
+    val color = remember(data.isDone) { (if (data.isDone) Orange else LightBlue) }
 
     Row(
         modifier = Modifier
@@ -294,26 +307,26 @@ fun TodoList(index: Int, data: TodoDto) {
             }
             Column() {
                 Text(
-                    text = data.name,
+                    text = data.name + "과제",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextColor,
-                    )
+                )
                 Text(
-                    text = data.major + "과제",
+                    text = data.subjectId,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     color = TextColor,
                 )
             }
         }
-        if (data.is_submit) {
+        if (data.isDone) {
             Canvas(modifier = Modifier.size(20.dp), onDraw = {
                 drawCircle(color = color)
             })
         } else {
             Text(
-                text = data.time,
+                text = TimeUtil.toStringAMSLong(data.deadline),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = TextColor,
