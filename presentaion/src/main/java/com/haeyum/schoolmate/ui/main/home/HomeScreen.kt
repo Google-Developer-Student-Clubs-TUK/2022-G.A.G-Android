@@ -84,7 +84,7 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
     nextTimetableRef: ConstrainedLayoutReference,
     scheduleRef: ConstrainedLayoutReference,
     profileRef: ConstrainedLayoutReference,
-    notifyTimeInfo: NotifyTime
+    notifyTimeInfo: NotifyTime?
 ) {
     Column(modifier = Modifier
         .zIndex(1f)
@@ -106,7 +106,10 @@ private fun ConstraintLayoutScope.NextTimeTableFrame(
 }
 
 @Composable
-private fun ConstraintLayoutScope.ProfileFrame(profileRef: ConstrainedLayoutReference, profileInfo: Profile?) {
+private fun ConstraintLayoutScope.ProfileFrame(
+    profileRef: ConstrainedLayoutReference,
+    profileInfo: Profile?
+) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.secondary)
@@ -173,6 +176,8 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>?) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+
+
         timeScheduleInfo?.forEach { data ->
             TimeScheduleList(data)
         }
@@ -181,18 +186,18 @@ private fun TimeSchedule(timeScheduleInfo: List<TimeSchedule>?) {
 }
 
 @Composable
-private fun NextTimetable(notifyTimeInfo: NotifyTime) {
+private fun NextTimetable(notifyTimeInfo: NotifyTime?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = notifyTimeInfo.message,
+            text = notifyTimeInfo?.message ?: "-",
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor
         )
-        notifyTimeInfo.time?.let {
+        notifyTimeInfo?.time?.let {
             Text(
                 text = it,
                 fontSize = 10.sp,
@@ -202,7 +207,7 @@ private fun NextTimetable(notifyTimeInfo: NotifyTime) {
         }
     }
 
-    if(notifyTimeInfo.isLeft) {
+    if (notifyTimeInfo!=null && notifyTimeInfo.isLeft) {
         Text(
             text = notifyTimeInfo.major + " " + notifyTimeInfo.leftTime,
             fontSize = 20.sp,
@@ -215,7 +220,7 @@ private fun NextTimetable(notifyTimeInfo: NotifyTime) {
 @Composable
 private fun UserInfo(profileInfo: Profile?) {
     Text(
-        text = (profileInfo?.id?.substring(0,2) ?: "-") + (profileInfo?.name ?: "-"),
+        text = (profileInfo?.id?.substring(0, 2) ?: "-") + (profileInfo?.name ?: "-"),
         fontSize = 25.sp,
         fontWeight = FontWeight.Bold,
         color = TextColor,
@@ -254,7 +259,7 @@ private fun TimeScheduleList(data: TimeSchedule) {
             )
         }
         Text(
-            text = TimeUtil.toStringMS(data.startTime)+"-"+TimeUtil.toStringMS(data.endTime),
+            text = TimeUtil.toStringMS(data.startTime) + "-" + TimeUtil.toStringMS(data.endTime),
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal,
             color = TextColor

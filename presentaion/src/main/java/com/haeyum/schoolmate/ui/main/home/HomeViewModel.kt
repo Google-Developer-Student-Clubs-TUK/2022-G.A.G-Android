@@ -32,12 +32,13 @@ class HomeViewModel @Inject constructor(
     getProfileUseCase: GetProfileUseCase
 ) : ViewModel() {
 
-    private val _notifyTimeInfo: MutableState<NotifyTime> =
-        mutableStateOf(NotifyTime(false, "초기값", null, null, null))
-    val notifyTimeInfo: State<NotifyTime> = _notifyTimeInfo
+    private val _notifyTimeInfo: MutableState<NotifyTime?> =
+        mutableStateOf(NotifyTime(false, "-", null, null, null))
+    val notifyTimeInfo: MutableState<NotifyTime?> = _notifyTimeInfo
 
     val timeScheduleInfo = flow {
         getTimeScheduleUseCase()?.let { timeSchedules ->
+            Log.d("result", "timeSchedules: $timeSchedules")
             emit(timeSchedules)
             _notifyTimeInfo.value = calNextTime(timeSchedules)
         } ?: throw Exception("Failed to get timeSchedule")
@@ -51,6 +52,7 @@ class HomeViewModel @Inject constructor(
 
     val todoInfo = flow {
         getTodoUseCase()?.let { todos ->
+            Log.d("result", "todos: $todos")
             emit(todos)
         } ?: throw Exception("Failed to get todo")
     }
